@@ -16,6 +16,14 @@
         <th>Punten</th>
       </tr>
     </thead>
+    <tfoot>
+      <tr>
+        <td colspan="3">
+          <input type="text" [(ngModel)]="newName" name="newName" />
+        </td>
+        <td><button (click)="addPerson()">Toevoegen</button></td>
+      </tr>
+    </tfoot>
     <tbody>
       @for(person of personsSignal();track person.id){
       <tr>
@@ -24,38 +32,39 @@
         <td>{{person.points}}</td>
         <td>
           <button (click)="raisePoints(person.id)">Extra punt</button>
+          <button (click)="deletePerson(person.id)">Verwijderen</button>
         </td>
       </tr>
       }
     </tbody>
   </table>
+  <h2>Computed Signals</h2>
+  <div>Aantal personen {{this.personCounter()}}</div>
+  <div>Som van de punten {{this.totalPoints()}}</div>
 </div>
-<div *ngIf="(countertest$ | async) as t"><p>{{t}}</p></div>
-<div *ngIf="(countertest$ | async) as t"><p>{{counter}}</p></div>
+<div *ngIf="(countertest$ | async) as t">
+  <p>{{t}}</p>
+</div>
+<div *ngIf="(countertest$ | async) as t">
+  <p>{{counter}}</p>
+</div>
 <div class="timer" *ngIf="(timeLeft$ | async) as t; else sorry">
-	<h4> Count down timer </h4>
-	<span id="days"> {{t.daysToDday}} </span>Day(s)
-	<span id="hours"> {{t.hoursToDday}} </span>Hrs
-	<span id="minutes"> {{t.minutesToDday}} </span>Min
-	<span id="seconds"> {{t.secondsToDday}} </span>S
+  <h4> Count down timer </h4>
+  <span id="days"> {{t.daysToDday}} </span>Day(s)
+  <span id="hours"> {{t.hoursToDday}} </span>Hrs
+  <span id="minutes"> {{t.minutesToDday}} </span>Min
+  <span id="seconds"> {{t.secondsToDday}} </span>S
 </div>
 <mat-card class="example-result-card">
   <mat-card-content>
     <h2>Slider</h2>
-    
+
     <div class="example-label-container">
       <label id="example-name-label" class="example-name-label">Value</label>
       <label class="example-value-label">{{value}}</label>
     </div>
-    <mat-slider
-        
-        class="example-margin"
-        [disabled]="disabled"
-        [max]="max"
-        [min]="min"
-        [step]="step"
-        [discrete]="thumbLabel"
-        [showTickMarks]="showTicks">
+    <mat-slider style="width: 80%;" class="example-margin" [disabled]="disabled" [max]="max" [min]="min" [step]="step"
+      [discrete]="thumbLabel" [showTickMarks]="showTicks">
       <input matSliderThumb [(ngModel)]="value" #slider>
     </mat-slider>
   </mat-card-content>
@@ -71,5 +80,5 @@
   </tr>
 </table>
 <ng-template #sorry>
-	Sorry, something went wrong...
+  Sorry, something went wrong...
 </ng-template>

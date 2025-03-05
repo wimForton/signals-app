@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { JsonPipe, CommonModule } from '@angular/common';
 import { Person } from './model/person';
@@ -20,11 +20,11 @@ import { MatCardModule } from '@angular/material/card';
   standalone: true,
   imports: [
     JsonPipe,
+    FormsModule,
     CommonModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule,
     MatCheckboxModule,
     MatSliderModule,
   ],
@@ -33,7 +33,7 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class AppComponent {
   disabled = false;
-  max = 100;
+  max = 400;
   min = 1;
   showTicks = false;
   step = 1;
@@ -59,6 +59,7 @@ export class AppComponent {
 
   public timeLeft$: Observable<timeComponents>;
   public countertest$: Observable<number>;
+  countertest2 = signal(0);
   public counter = 0;
   /**
    *
@@ -68,6 +69,7 @@ export class AppComponent {
       map(x => calcDateDiff()),
       shareReplay(1)
     );
+    ///////////////////////////////////////////////////////////////hier zit de timer voor de slider
     this.countertest$ = interval(10).pipe(
       map(y => this.loopNumber()),
       shareReplay(1)
@@ -75,15 +77,16 @@ export class AppComponent {
   }
 
   loopNumber(): number {
-    if (this.play) {
+    if (this.play) {/////////////////////dit is om de slider te stoppen of te starten maar ik zou de interval moeten stoppen en starten
       this.value++;
-      if (this.value > 100) {
+      if (this.value > 400) {
         this.value = 1;
       }
     }
     return this.value;
   }
   onPlay() {
+    //this.value = 100;
     this.play = true;
   }
   onStop() {
@@ -102,4 +105,24 @@ export class AppComponent {
     this.personsSignal.update(items => items.map(item => item.id == id ?
       { ...item, points: item.points + 1 } : item));
   }
+  newName = '';
+  addPerson() {
+    if (this.newName) {
+      this.personsSignal.update(items =>
+        [...items,
+        new Person(items[items.length - 1].id + 1,
+          this.newName, 0)]);
+    }
+  }
+  deletePerson(id: number) {
+    this.personsSignal.update(items =>
+      items.filter(item =>
+        item.id !== id));
+  }
+  personCounter = computed(() => this.personsSignal()
+    .reduce((counter, person) =>
+      counter + 1, 0));
+  totalPoints = computed(() => this.personsSignal()
+    .reduce((total, person) =>
+      total + person.points, 0));
 }
